@@ -9,6 +9,7 @@ class pokemon(object):
         self.XP = 0 #Get XP
         self.Level = level
         self.moves = moves
+        self.Status = None
         self.Stats = {"Health": 0, "Attack": 0, "Defense": 0, 
                       "Special": 0, "Speed": 0}
         self.Ivs = {"Health": 7, "Attack": 7, "Defense": 7, 
