@@ -1,4 +1,5 @@
-import tensorforce
+#import tensorforce
+import random
 from pokemon import pokemon
 
 class battle_sim():
@@ -8,10 +9,8 @@ class battle_sim():
     # pokemon_0 -- pokemon on one of the teams                                 #
     # pokemon_1 -- pokemon on the oposite team of pokemon_0                    #
     ############################################################################
-    def __init__(self, pokemon_0, pokemon_1):                                              
-        self.pokemon_0 = pokemon_0             
-        self.pokemon_1 = pokemon_1
-        self.pokemon = [pokemon_0, pokemon_1]
+    #def __init__(self, pokemon_0, pokemon_1):                                              
+        
         
 
 
@@ -27,31 +26,69 @@ class battle_sim():
     # Damage = | ----------------------------------- + 2 | * Modifier          #
     #           \                50                     /                      #
     ############################################################################
-    def calc_damage(self, move, attacker): 
-        A = self.pokemon[attacker].Stats["Attack"] # Get attack stat of attacker 
-        D = self.pokemon[not attacker].Stats["Defense"] # Get defenes stat of the attacker 
-        level = self.pokemon[attacker].Level # Get level of the attacker 
-        Power = 40 #Get move power
+    def calc_damage(self, move, attacker, defender): 
+        A = attacker.Stats["Attack"] # Get attack stat of attacker 
+        D = defender.Stats["Defense"] # Get defenes stat of the attacker 
+        level = attacker.Level # Get level of the attacker 
+        Power = int(move["Power"]) #Get move power
         Modifier = 1 #Calculate modifier based on types 
         
-        return ((((2 * level)/5 * Power * (A/D)) / 50) + 2) * Modifier        
+        left = ((((2 * level)/5 * Power * (A/D)) / 50) + 2) 
+        r = left * Modifier
+        return int(r)
     
 
     ############################################################################
-    # Small simulation used to train the indivdual AI,                         #
-    #   not used for the entire system                                         #
+    # Small simulation used to train the indivdual AI on a single turn,        #
+    #   not used for the entire system, on the fight ai                        #
     ############################################################################
-    def single_battle(self):
-        print(self.calc_damage(None, 0))
-        #if the battle is still going on
-        while self.pokemon[0].Current_HP > 0 and self.pokemon[1].Current_HP > 0:
-            exit()
-            #Do attacking 
-        
-        #Terminal Observe, fight is over 
+    def single_turn(self, pokemon_1, pokemon_2, move_1, move_2): 
+        if pokemon_1.Stats["Speed"] > pokemon_2.Stats["Speed"]:
+            First = 0
+        elif pokemon_2.Stats["Speed"] > pokemon_1.Stats["Speed"]:
+            First = 1
+        else:
+            First = random.randint(0,1)
+        poks = [pokemon_1, pokemon_2]
+        moves = [move_1, move_2]
 
-pokemon_1 = pokemon(1)
-pokemon_2 = pokemon(1)
+        for i in range(2):
+            attacker = poks[(First+i)%2]
+            defender = poks[(First+1+i)%2]
+            move = moves[(First+i)%2]
+            move["Current_PP"] -= 1
+            
+            #calculate miss 
 
-sim = battle_sim(pokemon_1, pokemon_2)
-sim.single_battle()
+
+            #calculate damage
+            if move["Power"] != 0:
+                damage = self.calc_damage(move, attacker, defender)
+                defender.Battle_Stats["Health"] -= damage
+            
+            #Status stuff 
+
+            if defender.Battle_Stats["Health"] <= 0:
+                return (First+1+i)%2
+
+            #Poison/Burn
+
+        return -1
+
+random.seed()
+sim = battle_sim()
+p1 = pokemon(random.randint(0, 1000000), random.randint(1,151))
+p2 = pokemon(random.randint(0, 1000000), random.randint(1,151))
+m1 = p1.Moves[0]
+m2 = p2.Moves[0]
+
+print(p1.Battle_Stats)
+print(p2.Battle_Stats)
+print(m1)
+print(m2)
+
+sim.single_turn(p1, p2, m1, m2)
+
+print(p1.Battle_Stats)
+print(p2.Battle_Stats)
+
