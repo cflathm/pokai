@@ -58,7 +58,11 @@ class battle_sim():
             move = moves[(First+i)%2]
             move["Current_PP"] -= 1
             
-            #calculate miss 
+            #Confusion Check
+
+            #Sleep check 
+
+            #calculate miss
 
 
             #calculate damage
@@ -66,6 +70,8 @@ class battle_sim():
                 damage = self.calc_damage(move, attacker, defender)
                 defender.Battle_Stats["Health"] -= damage
             
+            #Effects 
+
             #Status stuff 
 
             if defender.Battle_Stats["Health"] <= 0:
