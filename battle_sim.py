@@ -1,6 +1,6 @@
 #import tensorforce
 import random
-from pokemon import pokemon
+from poke import pokemon
 
 class battle_sim():
     
@@ -81,6 +81,10 @@ class battle_sim():
 
         return -1
 
+
+########################################################
+# Testing section, open to changing                    #
+########################################################
 random.seed()
 sim = battle_sim()
 p1 = pokemon(random.randint(0, 1000000), random.randint(1,151))
